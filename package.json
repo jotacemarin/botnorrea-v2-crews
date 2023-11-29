@@ -8,6 +8,8 @@
     "coverage": "jest --coverage",
     "dev:deploy": "sls deploy --stage dev --verbose",
     "dev:destroy": "sls remove --stage dev --verbose",
+    "prod:deploy": "sls deploy --stage prod --verbose",
+    "prod:destroy": "sls remove --stage prod --verbose",
     "local:crews": "sls invoke local -f crews -p mock_events/event_crews.json --stage dev",
     "local:crew": "sls invoke local -f crew -p mock_events/event_crew.json --stage dev",
     "local:crewsCreate": "sls invoke local -f crewsCreate -p mock_events/event_crews_create.json --stage dev",
