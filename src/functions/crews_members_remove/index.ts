@@ -20,12 +20,10 @@ const getDataFromBody = (
 };
 
 const getCrew = async (crewName: string) => {
-  await CrewDao.initInstance();
   return CrewDao.findByName(crewName);
 };
 
 const sendMessage = async (body: UpdateTg, text: string): Promise<void> => {
-  BotnorreaService.initInstance();
   await BotnorreaService.sendMessage({
     chat_id: body?.message?.chat?.id,
     text,
@@ -36,7 +34,6 @@ const sendMessage = async (body: UpdateTg, text: string): Promise<void> => {
 };
 
 const getUsersId = async (usernames: Array<string>): Promise<Array<User>> => {
-  await UserDao.initInstance();
   const users = await UserDao.findByUsernames(usernames);
   if (!users || !users?.length) {
     return [];
@@ -76,7 +73,6 @@ const saveCrew = async (
   members: Array<User>
 ): Promise<Crew | null> => {
   try {
-    await CrewDao.initInstance();
     return CrewDao.save({ ...crew, members });
   } catch (error) {
     return null;
@@ -86,6 +82,10 @@ const saveCrew = async (
 const execute = async (
   body: UpdateTg
 ): Promise<{ statusCode: number; body?: string }> => {
+  BotnorreaService.initInstance();
+  await CrewDao.initInstance();
+  await UserDao.initInstance();
+
   const { crewName, usernames } = getDataFromBody(body);
 
   const crew = await getCrew(crewName);

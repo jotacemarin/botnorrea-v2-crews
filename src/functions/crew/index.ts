@@ -6,7 +6,6 @@ import { CrewDao } from "../../lib/dao/crewDao";
 import { BotnorreaService } from "../../lib/services/botnorrea";
 
 const sendMessage = async (body: UpdateTg, text: string): Promise<void> => {
-  BotnorreaService.initInstance();
   await BotnorreaService.sendMessage({
     chat_id: body?.message?.chat?.id,
     text,
@@ -24,11 +23,13 @@ const getDataFromBody = (body: UpdateTg): { crew: string; message: string } => {
     ?.trim()
     ?.split(" ");
 
-  return { crew: crewName?.toLowerCase(), message: rawMessage?.join(" ")?.trim() };
+  return {
+    crew: crewName?.toLowerCase(),
+    message: rawMessage?.join(" ")?.trim(),
+  };
 };
 
 const getCrewMembers = async (name: string): Promise<string | void> => {
-  await CrewDao.initInstance();
   const crew = await CrewDao.findByName(name);
   if (!crew) {
     return;
@@ -58,10 +59,15 @@ const buildMessage = async (body: UpdateTg): Promise<string | void> => {
     return;
   }
 
-  return [`${crew}:`, `<b>${message}</b>`, crewMembers]?.join("\n\n")?.trim();
+  return [`${crew}:`, message ? `\n<b>${message}</b>\n` : "", `${crewMembers}`]
+    ?.join("\n")
+    ?.trim();
 };
 
 const execute = async (body: UpdateTg): Promise<{ statusCode: number }> => {
+  BotnorreaService.initInstance();
+  await CrewDao.initInstance();
+
   const crewMembers = await buildMessage(body);
   if (!crewMembers) {
     await sendMessage(body, "Crew not found");

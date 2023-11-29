@@ -28,7 +28,9 @@ const execute = async (
     return { statusCode: NOT_FOUND };
   }
 
-  await sendMessage(body, crews.map((crew: Crew) => crew?.name).join("\n"));
+  const message = crews.map((crew: Crew) => `- ${crew?.name}`).join("\n");
+
+  await sendMessage(body, `List of crews:\n\n${message}`);
   return { statusCode: OK };
 };
 

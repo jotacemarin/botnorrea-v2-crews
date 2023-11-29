@@ -12,12 +12,10 @@ import { getTextCommand } from "../../lib/utils/telegramHelper";
 import { UserDao } from "../../lib/dao/userDao";
 
 const extractSelfUser = async (body: UpdateTg): Promise<User | null> => {
-  await UserDao.initInstance();
   return UserDao.findByTelegramId(Number(body?.message?.from?.id));
 };
 
 const getUsersId = async (usernames: Array<string>): Promise<Array<User>> => {
-  await UserDao.initInstance();
   const users = await UserDao.findByUsernames(usernames);
   if (!users || !users?.length) {
     return [];
@@ -50,12 +48,10 @@ const getDataFromBody = (
 };
 
 const findCrewByName = async (crewName: string): Promise<Crew | null> => {
-  await CrewDao.initInstance();
   return CrewDao.findByName(crewName);
 };
 
 const sendMessage = async (body: UpdateTg, text: string): Promise<void> => {
-  BotnorreaService.initInstance();
   await BotnorreaService.sendMessage({
     chat_id: body?.message?.chat?.id,
     text,
@@ -79,7 +75,6 @@ const saveCrew = async (
   const mergedUsers = removeDupleMembers([user, ...usersInput]);
 
   try {
-    await CrewDao.initInstance();
     return CrewDao.save({
       name: crewName,
       members: mergedUsers,
@@ -95,6 +90,10 @@ const buildUsernames = (crew: Crew): string =>
 const execute = async (
   body: UpdateTg
 ): Promise<{ statusCode: number; body?: string }> => {
+  BotnorreaService.initInstance();
+  await UserDao.initInstance();
+  await CrewDao.initInstance();
+
   const { crewName, usernames } = getDataFromBody(body);
   const existingCrew = await findCrewByName(crewName);
   if (existingCrew) {

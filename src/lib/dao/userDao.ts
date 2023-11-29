@@ -48,9 +48,14 @@ export class UserDao {
   public static async findByUsernames(
     usernames: Array<string>
   ): Promise<Array<User>> {
+    if (!usernames.length) {
+      return [];
+    }
+
     const $or = usernames?.map((username: string) => ({
       username: username?.replace("@", "").trim(),
     }));
+
     return UserDao.userModel.find({ $or }).exec();
   }
 

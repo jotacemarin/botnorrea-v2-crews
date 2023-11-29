@@ -6,5 +6,5 @@
     "id": "botnorrea-v2-dev-admin",
     "apiKey": "0cc6598b-f0ad-48a9-a7c0-90830967ef30"
   },
-  "body": "{\"update_id\":262661470,\n\"message\":{\"message_id\":154,\"from\":{\"id\":1346557085,\"is_bot\":false,\"first_name\":\"Julio\",\"last_name\":\"Marin\",\"username\":\"jotacemarin\",\"language_code\":\"en\"},\"chat\":{\"id\":1346557085,\"first_name\":\"Julio\",\"last_name\":\"Marin\",\"username\":\"jotacemarin\",\"type\":\"private\"},\"date\":1699730820,\"text\":\"/crew tulua test botnorrea-v2\",\"entities\":[{\"offset\":0,\"length\":5,\"type\":\"bot_command\"}]}}"
+  "body": "{ \"update_id\": 262661590, \"message\": { \"message_id\": 94, \"from\": { \"id\": 1346557085, \"is_bot\": false, \"first_name\": \"Julio\", \"last_name\": \"Marin\", \"username\": \"jotacemarin\", \"language_code\": \"en\" }, \"chat\": { \"id\": -1002068882047, \"title\": \"botnorrea test group 1\", \"username\": \"d9ba4045\", \"type\": \"supergroup\" }, \"date\": 1701216172, \"text\": \"/crew all este es un mensaje de prueba\", \"entities\": [ { \"offset\": 0, \"length\": 5, \"type\": \"bot_command\" } ] } }"
 }
