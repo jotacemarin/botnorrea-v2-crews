@@ -2,7 +2,7 @@ name: ${self:custom.secrets.service.name}-${self:custom.secrets.provider.stage}-
 handler: index.crew
 memorySize: 128
 timeout: 30
-reservedConcurrency: 20
+reservedConcurrency: 5
 events:
   - http:
       path: /${self:custom.secrets.service.name}-${self:custom.secrets.provider.stage}/crews/crew
