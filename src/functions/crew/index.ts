@@ -20,6 +20,7 @@ const getDataFromBody = (body: UpdateTg): { crew: string; message: string } => {
 
   const [crewName, ...rawMessage] = body?.message?.text
     ?.replace(key, "")
+    ?.replace(/[\r\n]+/g, " ")
     ?.trim()
     ?.split(" ");
 
@@ -59,7 +60,11 @@ const buildMessage = async (body: UpdateTg): Promise<string | void> => {
     return;
   }
 
-  return [`${crew}:`, message ? `\n<b>${message}</b>\n` : "", `${crewMembers}`]
+  return [
+    `${crew}:`,
+    Boolean(message) ? `\n<b>${message}</b>\n` : "",
+    `${crewMembers}`,
+  ]
     ?.join("\n")
     ?.trim();
 };
