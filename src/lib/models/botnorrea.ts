@@ -8,7 +8,7 @@ interface AtedAt {
 
 export interface User {
   _id?: ID | string;
-  id: string;
+  id: number | string;
   username: string;
   firstname?: string;
   lastname?: string;

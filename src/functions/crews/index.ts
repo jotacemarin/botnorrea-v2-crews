@@ -1,8 +1,8 @@
 import { APIGatewayEvent, Callback, Context } from "aws-lambda";
 import { OK, BAD_REQUEST, NOT_FOUND } from "http-status";
 import { Crew, UpdateTg } from "../../lib/models";
-import { BotnorreaService } from "../../lib/services/botnorrea";
-import { CrewDao } from "../../lib/dao/crewDao";
+import { BotnorreaService } from "../../lib/services";
+import { CrewDao } from "../../lib/dao";
 
 const getCrews = async (): Promise<Array<Crew>> => {
   await CrewDao.initInstance();
@@ -12,7 +12,7 @@ const getCrews = async (): Promise<Array<Crew>> => {
 const sendMessage = async (body: UpdateTg, text: string): Promise<void> => {
   BotnorreaService.initInstance();
   await BotnorreaService.sendMessage({
-    chat_id: body?.message?.chat?.id,
+    chat_id: body?.message!.chat?.id,
     text,
     reply_to_message_id: body?.message?.message_id,
   });

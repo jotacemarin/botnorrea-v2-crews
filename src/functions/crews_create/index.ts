@@ -1,15 +1,9 @@
 import { APIGatewayEvent, Callback, Context } from "aws-lambda";
-import {
-  CREATED,
-  BAD_REQUEST,
-  NOT_IMPLEMENTED,
-  NOT_MODIFIED,
-} from "http-status";
+import { CREATED, BAD_REQUEST, NOT_MODIFIED } from "http-status";
 import { Crew, FormattingOptionsTg, UpdateTg, User } from "../../lib/models";
-import { BotnorreaService } from "../../lib/services/botnorrea";
-import { CrewDao } from "../../lib/dao/crewDao";
+import { BotnorreaService } from "../../lib/services";
+import { CrewDao, UserDao } from "../../lib/dao";
 import { getTextCommand } from "../../lib/utils/telegramHelper";
-import { UserDao } from "../../lib/dao/userDao";
 
 const extractSelfUser = async (body: UpdateTg): Promise<User | null> => {
   return UserDao.findByTelegramId(Number(body?.message?.from?.id));
@@ -39,8 +33,8 @@ const getDataFromBody = (
 ): { crewName: string; usernames: Array<string> } => {
   const key = getTextCommand(body) ?? "";
 
-  const [crewName, ...usernames] = body?.message?.text
-    ?.replace(key, "")
+  const [crewName, ...usernames] = body
+    ?.message!.text?.replace(key, "")
     ?.trim()
     ?.split(" ");
 
@@ -53,7 +47,7 @@ const findCrewByName = async (crewName: string): Promise<Crew | null> => {
 
 const sendMessage = async (body: UpdateTg, text: string): Promise<void> => {
   await BotnorreaService.sendMessage({
-    chat_id: body?.message?.chat?.id,
+    chat_id: body?.message!.chat?.id,
     text,
     reply_to_message_id: body?.message?.message_id,
     parse_mode: FormattingOptionsTg.HTML,

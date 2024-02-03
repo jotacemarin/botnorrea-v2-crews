@@ -46,6 +46,10 @@ export const getTextCommand = (body: UpdateTg): null | string => {
 
   const position = getTextCommandPosition(body);
   const key = getTextCommandKey(body, position);
+  if (!key) {
+    return null;
+  }
+
   if (key === "") {
     return null;
   }

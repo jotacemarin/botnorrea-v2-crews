@@ -1,14 +1,13 @@
 import { APIGatewayEvent, Callback, Context } from "aws-lambda";
 import { OK, BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR } from "http-status";
 import { Crew, FormattingOptionsTg, UpdateTg, User } from "../../lib/models";
+import { CrewDao, UserDao } from "../../lib/dao";
+import { BotnorreaService } from "../../lib/services";
 import { getTextCommand } from "../../lib/utils/telegramHelper";
-import { UserDao } from "../../lib/dao/userDao";
-import { CrewDao } from "../../lib/dao/crewDao";
-import { BotnorreaService } from "../../lib/services/botnorrea";
 
 const sendMessage = async (body: UpdateTg, text: string): Promise<void> => {
   await BotnorreaService.sendMessage({
-    chat_id: body?.message?.chat?.id,
+    chat_id: body?.message!.chat?.id,
     text,
     reply_to_message_id: body?.message?.message_id,
     parse_mode: FormattingOptionsTg.HTML,
@@ -21,8 +20,8 @@ const getDataFromBody = (
 ): { crewName: string; usernames: Array<string> } => {
   const key = getTextCommand(body) ?? "";
 
-  const [crewName, ...usernames] = body?.message?.text
-    ?.replace(key, "")
+  const [crewName, ...usernames] = body
+    ?.message!.text?.replace(key, "")
     ?.trim()
     ?.split(" ");
 
