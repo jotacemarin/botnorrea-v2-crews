@@ -15,19 +15,24 @@ export enum FormattingOptionsTg {
 }
 
 export interface ChatTg {
-  id: number | string;
+  id: number;
   title: string;
   type: ChatTypeTg | string;
   all_members_are_administrators: boolean;
 }
 
 export interface UserTg {
-  id: number | string;
+  id: number;
   is_bot: boolean;
   first_name: string;
   last_name: string;
   username: string;
   language_code: string;
+  is_premium?: boolean;
+  added_to_attachment_menu?: boolean;
+  can_join_groups?: boolean;
+  can_read_all_group_messages?: boolean;
+  supports_inline_queries?: boolean;
 }
 
 export interface EntityTg {
@@ -53,15 +58,27 @@ export interface PhotoSizeTg {
   file_size: number;
 }
 
+export interface VideoTg {
+  file_id: string;
+  file_unique_id: string;
+  width: number;
+  height: number;
+  file_size: number;
+  mime_type: string;
+}
+
 export interface MessageTg {
   message_id: number;
+  message_thread_id?: number;
   from: UserTg;
+  sender_chat?: ChatTg;
   chat: ChatTg;
   date: number;
   text: string;
   caption: string;
   reply_to_message: MessageTg;
   photo: Array<PhotoSizeTg>;
+  video: VideoTg;
   entities?: Array<EntityTg>;
   caption_entities?: Array<EntityTg>;
   reply_markup?: ReplyMarkupTg;

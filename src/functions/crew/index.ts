@@ -2,15 +2,46 @@ import { APIGatewayEvent, Callback, Context } from "aws-lambda";
 import { BAD_REQUEST, OK, NOT_FOUND } from "http-status";
 import { FormattingOptionsTg, UpdateTg, User } from "../../lib/models";
 import { CrewDao } from "../../lib/dao";
-import { BotnorreaService } from "../../lib/services";
+import {
+  BotnorreaService,
+  SendMessageParams,
+  SendPhotoParams,
+} from "../../lib/services";
 import { getTextCommand } from "../../lib/utils/telegramHelper";
+import { SendVideoParams } from "../../lib/services/botnorrea";
 
-const sendMessage = async (body: UpdateTg, text: string): Promise<void> => {
-  await BotnorreaService.sendMessage({
+const sendMessage = async (
+  body: UpdateTg,
+  text: string,
+  attachments?: { video?: string; photo?: string } | null
+): Promise<void> => {
+  const params = {
     chat_id: body?.message!.chat?.id,
-    text,
     reply_to_message_id: body?.message?.message_id,
     parse_mode: FormattingOptionsTg?.HTML,
+  };
+
+  if (attachments?.video) {
+    await BotnorreaService.sendVideo({
+      ...params,
+      caption: text,
+      video: attachments.video,
+    });
+    return;
+  }
+
+  if (attachments?.photo) {
+    await BotnorreaService.sendPhoto({
+      ...params,
+      caption: text,
+      photo: attachments.photo,
+    });
+    return;
+  }
+
+  await BotnorreaService.sendMessage({
+    ...params,
+    text,
   });
   return;
 };
@@ -18,8 +49,9 @@ const sendMessage = async (body: UpdateTg, text: string): Promise<void> => {
 const getDataFromBody = (body: UpdateTg): { crew: string; message: string } => {
   const key = getTextCommand(body) ?? "";
 
-  const [crewName, ...rawMessage] = body
-    ?.message!.text?.replace(key, "")
+  const text = body?.message?.text ?? body?.message?.caption ?? "";
+  const [crewName, ...rawMessage] = text
+    ?.replace(key, "")
     ?.replace(/[\r\n]+/g, " ")
     ?.trim()
     ?.split(" ");
@@ -69,17 +101,40 @@ const buildMessage = async (body: UpdateTg): Promise<string | void> => {
     ?.trim();
 };
 
+const buildAttachments = (
+  body: UpdateTg
+): { video?: string; photo?: string } | null => {
+  if (body?.message?.video) {
+    return {
+      video: body?.message?.video?.file_id,
+    };
+  }
+
+  if (body?.message?.photo) {
+    const [bigPhoto] = body?.message?.photo?.sort(
+      (first, second) => first.file_size - second.file_size
+    );
+
+    return {
+      photo: bigPhoto?.file_id,
+    };
+  }
+
+  return null;
+};
+
 const execute = async (body: UpdateTg): Promise<{ statusCode: number }> => {
   BotnorreaService.initInstance();
   await CrewDao.initInstance();
 
-  const crewMembers = await buildMessage(body);
-  if (!crewMembers) {
+  const messageWithMembers = await buildMessage(body);
+  if (!messageWithMembers) {
     await sendMessage(body, "Crew not found");
     return { statusCode: NOT_FOUND };
   }
 
-  await sendMessage(body, crewMembers);
+  const attachments = buildAttachments(body);
+  await sendMessage(body, messageWithMembers, attachments);
   return { statusCode: OK };
 };
 
