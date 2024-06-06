@@ -18,8 +18,9 @@ const sendMessage = async (body: UpdateTg, text: string): Promise<void> => {
 const getDataFromBody = (body: UpdateTg): { crew: string; message: string } => {
   const key = getTextCommand(body) ?? "";
 
-  const [crewName, ...rawMessage] = body
-    ?.message!.text?.replace(key, "")
+  const text = body?.message!.text ?? body?.message!.caption ?? "";
+  const [crewName, ...rawMessage] = text
+    ?.replace(key, "")
     ?.replace(/[\r\n]+/g, " ")
     ?.trim()
     ?.split(" ");
