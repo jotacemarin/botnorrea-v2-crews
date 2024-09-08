@@ -22,6 +22,8 @@ provider:
     MONGO_PASSWORD: ${self:custom.secrets.provider.environment.MONGO_PASSWORD}
     MONGO_HOST: ${self:custom.secrets.provider.environment.MONGO_HOST}
     MONGO_DATABASE: ${self:custom.secrets.provider.environment.MONGO_DATABASE}
+    USERNAME: ${self:custom.secrets.provider.environment.USERNAME}
+    PASSWORD: ${self:custom.secrets.provider.environment.PASSWORD}
 
 functions:
   crews: ${file(./src/functions/crews/function.yml)}

@@ -1,7 +1,7 @@
 import axios, { AxiosResponse, AxiosInstance } from "axios";
 import { EntityTg, UserTg, FormattingOptionsTg, ChatTg } from "../models";
 
-const { TELEGRAM_SEND_MESSAGE_URL } = process.env;
+const { TELEGRAM_SEND_MESSAGE_URL, USERNAME, PASSWORD } = process.env;
 
 interface InlineKeyboardButton {
   text: string;
@@ -117,6 +117,7 @@ export class BotnorreaService {
     if (!this.instance) {
       this.instance = axios.create({
         baseURL: `${TELEGRAM_SEND_MESSAGE_URL}`,
+        auth: { username: `${USERNAME}`, password: `${PASSWORD}` },
       });
     }
   }
